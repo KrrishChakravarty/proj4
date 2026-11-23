@@ -1,0 +1,72 @@
+clouduser@AZLTT0222435e27:~/Documents/proj4$ terraform apply -auto-approve
+
+Terraform used the selected providers to generate the following execution plan.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_iam_policy.s3_read will be created
+  + resource "aws_iam_policy" "s3_read" {
+      + arn              = (known after apply)
+      + attachment_count = (known after apply)
+      + id               = (known after apply)
+      + name             = "proj4-s3-read-only"
+      + name_prefix      = (known after apply)
+      + path             = "/"
+      + policy           = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action   = [
+                          + "s3:ListAllMyBuckets",
+                          + "s3:ListBucket",
+                          + "s3:GetObject",
+                        ]
+                      + Effect   = "Allow"
+                      + Resource = "*"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + policy_id        = (known after apply)
+      + tags_all         = (known after apply)
+    }
+
+  # aws_iam_user.reader will be created
+  + resource "aws_iam_user" "reader" {
+      + arn           = (known after apply)
+      + force_destroy = true
+      + id            = (known after apply)
+      + name          = "proj4-s3-reader"
+      + path          = "/"
+      + tags_all      = (known after apply)
+      + unique_id     = (known after apply)
+    }
+
+  # aws_iam_user_policy_attachment.attach will be created
+  + resource "aws_iam_user_policy_attachment" "attach" {
+      + id         = (known after apply)
+      + policy_arn = (known after apply)
+      + user       = "proj4-s3-reader"
+    }
+
+Plan: 3 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + user_arn = (known after apply)
+aws_iam_user.reader: Creating...
+aws_iam_policy.s3_read: Creating...
+aws_iam_user.reader: Creation complete after 1s [id=proj4-s3-reader]
+aws_iam_policy.s3_read: Creation complete after 1s [id=arn:aws:iam::590507089733:policy/proj4-s3-read-only]
+aws_iam_user_policy_attachment.attach: Creating...
+aws_iam_user_policy_attachment.attach: Creation complete after 0s [id=proj4-s3-reader/arn:aws:iam::590507089733:policy/proj4-s3-read-only]
+
+Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+user_arn = "arn:aws:iam::590507089733:user/proj4-s3-reader"
+
+NOTE: The IAM user and S3 read-only policy were created and attached via Terraform, with the policy stored as a variable. Creating access keys and effective-permission checks were denied by account-level restrictions )explicit deny with no matching user policy, no permissions boundary), so I verified the configuration through policy content and attachment instead.
